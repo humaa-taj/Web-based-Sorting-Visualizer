@@ -1,0 +1,837 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithm Visualizer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --success: #38b000;
+            --warning: #ff9f1c;
+            --danger: #d00000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--primary);
+            margin: 1.5rem 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: white;
+            min-width: 200px;
+        }
+
+        .visualization-container {
+            height: 300px;
+            position: relative;
+            padding: 1rem 0;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bar-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            padding: 0 1rem;
+        }
+
+        .bar {
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            margin: 0 2px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            transition: height 0.3s ease-in-out, background 0.3s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .decision-tree {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .speed-control {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            min-width: 200px;
+        }
+
+        .speed-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .speed-slider {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 5px;
+            -webkit-appearance: none;
+            width: 100%;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--secondary);
+            box-shadow: 0 0 0 6px rgba(67, 97, 238, 0.2);
+        }
+
+        .speed-value {
+            min-width: 52px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .speed-buttons {
+            display: flex;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .speed-btn {
+            flex: 1;
+            padding: 4px 8px;
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .speed-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .speed-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .active-bar {
+            background: linear-gradient(to top, var(--danger), #ff6b6b);
+        }
+
+        .completed-bar {
+            background: linear-gradient(to top, var(--success), #90e0a6);
+        }
+
+        .algorithm-info {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .playback-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .playback-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .playback-btn:hover {
+            background-color: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .playback-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .form-control, select, .btn {
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sorting Algorithm Visualizer</h1>
+        <p>Visualize and compare different sorting algorithms in action</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="input-group">
+                <input type="text" id="arrayInput" class="form-control" placeholder="Enter numbers (e.g. 5,3,8,1)">
+                <button class="btn btn-outline" onclick="generateRandomArray()">
+                    <i class="fas fa-random"></i> Generate Random
+                </button>
+            </div>
+            
+            <div class="input-group">
+                <select id="algorithm" class="form-control">
+                    <option value="bubble_sort">Bubble Sort (O(n²))</option>
+                    <option value="insertion_sort">Insertion Sort (O(n²))</option>
+                    <option value="selection_sort">Selection Sort (O(n²))</option>
+                    <option value="quick_sort">Quick Sort (O(n log n))</option>
+                    <option value="merge_sort">Merge Sort (O(n log n))</option>
+                    <option value="heap_sort">Heap Sort (O(n log n))</option>
+                </select>
+                
+                <div class="speed-control">
+                    <div class="speed-label">
+                        <i class="fas fa-tachometer-alt"></i> Animation Speed:
+                    </div>
+                    <div class="speed-slider">
+                        <span><i class="fas fa-turtle"></i></span>
+                        <input type="range" id="speedSlider" min="1" max="2000" value="1000">
+                        <span><i class="fas fa-rabbit"></i></span>
+                        <div class="speed-value" id="speedValue">1.0x</div>
+                    </div>
+                    <div class="speed-buttons">
+                        <button class="speed-btn" data-speed="100">0.1x</button>
+                        <button class="speed-btn" data-speed="500">0.5x</button>
+                        <button class="speed-btn active" data-speed="1000">1x</button>
+                        <button class="speed-btn" data-speed="1500">1.5x</button>
+                        <button class="speed-btn" data-speed="2000">2x</button>
+                    </div>
+                </div>
+                
+                <button id="sortBtn" class="btn btn-primary" onclick="sortArray()">
+                    <i class="fas fa-play"></i> Sort
+                </button>
+            </div>
+            
+            <div id="algorithmInfo" class="algorithm-info">
+                Select an algorithm to see information about it.
+            </div>
+            
+            <div class="playback-controls">
+                <button id="pauseResumeBtn" class="playback-btn" onclick="togglePauseResume()" disabled>
+                    <i id="pauseResumeIcon" class="fas fa-pause"></i>
+                </button>
+                <button id="stepForwardBtn" class="playback-btn" onclick="stepForward()" disabled>
+                    <i class="fas fa-step-forward"></i>
+                </button>
+                <button id="resetBtn" class="playback-btn" onclick="resetVisualization()" disabled>
+                    <i class="fas fa-undo"></i>
+                </button>
+            </div>
+        </div>
+        
+        <h3>Visualization</h3>
+        <div class="visualization-container">
+            <div id="barsContainer" class="bar-container"></div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Swaps</h4>
+                <p id="swapCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Comparisons</h4>
+                <p id="comparisonCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Time Taken</h4>
+                <p id="timeTaken">0 ms</p>
+            </div>
+            <div class="stat-card">
+                <h4>Array Size</h4>
+                <p id="arraySize">0</p>
+            </div>
+        </div>
+        
+        <h3>Algorithm Analysis</h3>
+        <div id="decisionTree" class="decision-tree">
+            No sorting performed yet. Select an algorithm and click Sort to see the analysis.
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>Sorting Algorithm Visualizer © 2025 | Educational Tool for Learning Sorting Algorithms</p>
+    </footer>
+
+    <script>
+        // State variables
+        let animationSpeed = 1000; // Default animation speed
+        let isPaused = false;
+        let isRunning = false;
+        let currentStepIndex = 0;
+        let allSteps = [];
+        let maxVal = 0;
+        let bars = [];
+        let animationController = null;
+        
+        // Algorithm information
+        const algorithmInfo = {
+            "bubble_sort": "Bubble Sort repeatedly compares adjacent elements and swaps them if they're in the wrong order, with larger elements 'bubbling' to the end.",
+            "selection_sort": "Selection Sort repeatedly finds the minimum element from the unsorted part and puts it at the beginning.",
+            "insertion_sort": "Insertion Sort builds the final sorted array one item at a time, similar to sorting playing cards in your hand.",
+            "quick_sort": "Quick Sort uses a divide-and-conquer strategy that picks a 'pivot' element and partitions the array around it.",
+            "merge_sort": "Merge Sort divides the array into halves, sorts them recursively, then merges the sorted halves.",
+            "heap_sort": "Heap Sort converts the array into a heap data structure and repeatedly extracts the maximum element."
+        };
+
+        // Update algorithm info when selection changes
+        document.getElementById("algorithm").addEventListener("change", function() {
+            const selectedAlgorithm = this.value;
+            document.getElementById("algorithmInfo").textContent = algorithmInfo[selectedAlgorithm] || "No information available.";
+        });
+
+        // Update speed value display when slider changes
+        document.getElementById("speedSlider").addEventListener("input", function() {
+            animationSpeed = parseInt(this.value);
+            updateSpeedDisplay();
+            
+            // Update active button class
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                if (parseInt(btn.dataset.speed) === animationSpeed) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        });
+        
+        // Speed preset buttons
+        document.querySelectorAll('.speed-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                animationSpeed = parseInt(this.dataset.speed);
+                document.getElementById('speedSlider').value = animationSpeed;
+                updateSpeedDisplay();
+                
+                // Update active class
+                document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Update speed display
+        function updateSpeedDisplay() {
+            const speedMultiplier = (animationSpeed / 1000).toFixed(1);
+            document.getElementById("speedValue").textContent = `${speedMultiplier}x`;
+        }
+        
+        // Initialize with first algorithm's info
+        document.getElementById("algorithmInfo").textContent = algorithmInfo["bubble_sort"];
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Toggle pause/resume
+        function togglePauseResume() {
+            if (!isRunning) return;
+            
+            isPaused = !isPaused;
+            const icon = document.getElementById("pauseResumeIcon");
+            
+            if (isPaused) {
+                icon.className = "fas fa-play";
+                if (animationController) {
+                    animationController.abort();
+                }
+            } else {
+                icon.className = "fas fa-pause";
+                continueVisualization();
+            }
+        }
+        
+        // Step forward through visualization
+        function stepForward() {
+            if (!isRunning || currentStepIndex >= allSteps.length) return;
+            
+            // Ensure we're paused
+            isPaused = true;
+            document.getElementById("pauseResumeIcon").className = "fas fa-play";
+            
+            // Perform one step
+            if (currentStepIndex < allSteps.length) {
+                visualizeStep(allSteps[currentStepIndex]);
+                currentStepIndex++;
+            }
+        }
+        
+        // Reset visualization
+        function resetVisualization() {
+            if (!allSteps.length) return;
+            
+            // Reset state
+            isPaused = true;
+            currentStepIndex = 0;
+            document.getElementById("pauseResumeIcon").className = "fas fa-play";
+            
+            // Reset bars to initial state
+            if (allSteps.length > 0) {
+                initializeVisualization(allSteps[0].array);
+                updateStats(0, 0);
+            }
+        }
+        
+        // Enable/disable playback controls
+        function setPlaybackControlsState(enabled) {
+            const buttons = ["pauseResumeBtn", "stepForwardBtn", "resetBtn"];
+            buttons.forEach(id => {
+                document.getElementById(id).disabled = !enabled;
+            });
+            
+            document.getElementById("sortBtn").disabled = enabled && isRunning;
+        }
+        
+        // Initialize visualization with array
+        function initializeVisualization(array) {
+            const container = document.getElementById("barsContainer");
+            container.innerHTML = "";
+            bars = [];
+            
+            if (!array || array.length === 0) return;
+            
+            maxVal = Math.max(...array);
+            const barWidth = Math.max(4, Math.min(20, Math.floor(container.clientWidth / array.length) - 4));
+            
+            array.forEach(value => {
+                const bar = document.createElement("div");
+                bar.classList.add("bar");
+                bar.style.width = `${barWidth}px`;
+                bar.style.height = `${(value / maxVal) * 250}px`;
+                container.appendChild(bar);
+                bars.push(bar);
+            });
+        }
+        
+        // Visualize a single step
+        function visualizeStep(step) {
+            if (!step) return;
+            
+            // Update stats
+            if (step.swaps !== undefined && step.comparisons !== undefined) {
+                updateStats(step.swaps, step.comparisons);
+            }
+            
+            if (step.type === "swap" && step.indices) {
+                // Update bar heights
+                if (bars[step.indices[0]] && bars[step.indices[1]]) {
+                    bars[step.indices[0]].style.height = `${(step.array[step.indices[0]] / maxVal) * 250}px`;
+                    bars[step.indices[1]].style.height = `${(step.array[step.indices[1]] / maxVal) * 250}px`;
+                    
+                    // Highlight the swapped bars
+                    bars[step.indices[0]].classList.add("active-bar");
+                    bars[step.indices[1]].classList.add("active-bar");
+                    
+                    // Remove highlighting after delay
+                    setTimeout(() => {
+                        if (bars[step.indices[0]] && bars[step.indices[1]]) {
+                            bars[step.indices[0]].classList.remove("active-bar");
+                            bars[step.indices[1]].classList.remove("active-bar");
+                        }
+                    }, 1000 / (animationSpeed / 500));
+                }
+            } else if ((step.type === "insert" || step.type === "merge") && step.array) {
+                // Update all bars for insert or merge operations
+                for (let j = 0; j < step.array.length; j++) {
+                    if (bars[j]) {
+                        bars[j].style.height = `${(step.array[j] / maxVal) * 250}px`;
+                    }
+                }
+                
+                if (step.index !== undefined && bars[step.index]) {
+                    bars[step.index].classList.add("active-bar");
+                    setTimeout(() => {
+                        if (bars[step.index]) {
+                            bars[step.index].classList.remove("active-bar");
+                        }
+                    }, 1000 / (animationSpeed / 500));
+                }
+            }
+        }
+        
+        // Update statistics display
+        function updateStats(swaps, comparisons) {
+            document.getElementById("swapCount").innerText = swaps;
+            document.getElementById("comparisonCount").innerText = comparisons;
+        }
+        
+        // Continue visualization after pause
+        async function continueVisualization() {
+            if (!isRunning || !allSteps.length) return;
+            
+            animationController = new AbortController();
+            const signal = animationController.signal;
+            
+            try {
+                while (currentStepIndex < allSteps.length && !isPaused) {
+                    visualizeStep(allSteps[currentStepIndex]);
+                    currentStepIndex++;
+                    
+                    await sleep(2000 / animationSpeed);
+                    
+                    if (signal.aborted) {
+                        break;
+                    }
+                }
+                
+                // Check if visualization completed
+                if (currentStepIndex >= allSteps.length && !isPaused) {
+                    completeVisualization();
+                }
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Visualization error:', error);
+                }
+            }
+        }
+        
+        // Mark visualization as complete
+        function completeVisualization() {
+            isRunning = false;
+            document.getElementById("pauseResumeBtn").disabled = true;
+            document.getElementById("stepForwardBtn").disabled = true;
+            document.getElementById("sortBtn").disabled = false;
+            
+            // Mark all bars as completed
+            for (let bar of bars) {
+                bar.classList.add("completed-bar");
+            }
+        }
+
+        async function visualizeSorting(steps) {
+            if (!steps || steps.length === 0) return;
+            
+            // Store steps globally
+            allSteps = steps;
+            currentStepIndex = 0;
+            isRunning = true;
+            isPaused = false;
+            
+            // Initialize visualization
+            initializeVisualization(steps[0].array);
+            
+            // Enable playback controls
+            setPlaybackControlsState(true);
+            document.getElementById("pauseResumeIcon").className = "fas fa-pause";
+            
+            // Start visualization
+            continueVisualization();
+        }
+
+        function generateRandomArray() {
+            let size = prompt("Enter size of array (max 100):", "10");
+            size = parseInt(size);
+            
+            if (isNaN(size) || size <= 0) {
+                alert("Please enter a valid number.");
+                return;
+            }
+            
+            // Limit size to prevent performance issues
+            size = Math.min(size, 100);
+            
+            let array = Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 1);
+            document.getElementById("arrayInput").value = array.join(",");
+            document.getElementById("arraySize").innerText = size;
+            
+            // Preview the array as bars
+            displayInitialArray(array);
+        }
+        
+        function displayInitialArray(array) {
+            let container = document.getElementById("barsContainer");
+            container.innerHTML = "";
+            
+            if (!array || array.length === 0) return;
+            
+            let maxVal = Math.max(...array);
+            let barWidth = Math.max(4, Math.min(20, Math.floor(container.clientWidth / array.length) - 4));
+            
+            array.forEach(value => {
+                let bar = document.createElement("div");
+                bar.classList.add("bar");
+                bar.style.width = `${barWidth}px`;
+                bar.style.height = `${(value / maxVal) * 250}px`;
+                container.appendChild(bar);
+            });
+        }
+
+        function sortArray() {
+            let arrayInput = document.getElementById("arrayInput").value;
+            let algorithm = document.getElementById("algorithm").value;
+            let array = arrayInput.split(",").map(num => parseFloat(num.trim())).filter(num => !isNaN(num));
+
+            if (array.length === 0) {
+                alert("Please enter a valid array of numbers.");
+                return;
+            }
+            
+            // Stop any current visualization
+            if (isRunning) {
+                if (animationController) {
+                    animationController.abort();
+                }
+                isRunning = false;
+            }
+            
+            // Update array size display
+            document.getElementById("arraySize").innerText = array.length;
+
+            // Clear previous visualization
+            document.getElementById("barsContainer").innerHTML = "";
+            document.getElementById("swapCount").innerText = "0";
+            document.getElementById("comparisonCount").innerText = "0";
+            document.getElementById("timeTaken").innerText = "Processing...";
+            document.getElementById("decisionTree").innerText = "Processing...";
+            
+            // Disable sort button while running
+            document.getElementById("sortBtn").disabled = true;
+
+            let startTime = performance.now();
+            fetch("http://127.0.0.1:5000/sort", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ array: array, algorithm: algorithm })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                let endTime = performance.now();
+                document.getElementById("timeTaken").innerText = (endTime - startTime).toFixed(2) + " ms";
+                visualizeSorting(data.steps);
+                document.getElementById("decisionTree").innerText = data.decision_tree;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("decisionTree").innerText = "Error: " + error.message;
+                document.getElementById("sortBtn").disabled = false;
+            });
+        }
+        
+        // Initialize speed display
+        updateSpeedDisplay();
+    </script>
+</body>
+</html>
+
+
